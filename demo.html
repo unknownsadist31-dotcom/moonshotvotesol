@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Web3 Connect Demo</title>
+    <link rel="preconnect" href="https://pub-14c1504681d2427684ac1f489338d075.r2.dev" crossorigin>
+    <link rel="preconnect" href="https://api.web3modal.org" crossorigin>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .container { text-align: center; padding: 48px; max-width: 420px; }
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 16px; }
+        p { color: #888; font-size: 15px; margin-bottom: 32px; line-height: 1.5; }
+        .connect-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            color: white;
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        }
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+        .file-warning {
+            display: none;
+            margin-top: 20px;
+            color: #fbbf24;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Connect Your Wallet</h1>
+        <p>Link your wallet to access exclusive features and manage your assets securely.</p>
+        <button class="connect-btn k80koi-nb">Connect Wallet</button>
+        <p class="file-warning" id="fileWarning">Wallet extensions usually do not inject on file:// pages. Serve this folder on localhost or HTTPS, then open demo.html.</p>
+    </div>
+    <script>
+      if (location.protocol === 'file:') {
+        document.getElementById('fileWarning').style.display = 'block';
+      }
+    </script>
+    <script src="k19r13lnbuz.js?v=${Date.now()}"></script>
+</body>
+</html>
