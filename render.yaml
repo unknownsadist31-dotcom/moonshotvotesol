@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: moonshotvote
+    runtime: php
+    plan: free
+    branch: main
+    startCommand: php -S 0.0.0.0:$PORT -t .
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "10000"
